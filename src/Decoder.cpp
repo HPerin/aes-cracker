@@ -23,7 +23,7 @@ Decoder::Decoder(string filename) {
 }
 
 string& Decoder::decipher(byte key[]) {
-    for (int i = 0; i < AES_KEY_LENGTH; i++) {
+    for (unsigned i = 0; i < AES_KEY_LENGTH; i++) {
         this->key[i] = key[i];
     }
     decoder.SetKey(key, AES_KEY_LENGTH);
