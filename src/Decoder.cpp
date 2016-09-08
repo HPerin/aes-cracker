@@ -8,7 +8,9 @@
 using std::ifstream;
 using std::getline;
 
-Decoder::Decoder(string filename) {
+Decoder::Decoder(string filename, bool (*isValid)(string&)) {
+    this->isValid = isValid;
+
     ifstream file(filename);
 
     string line;
@@ -30,10 +32,17 @@ string& Decoder::decipher(byte key[]) {
 
     decoded = "";
     for (string &cur : encoded) {
+        string curDecoded;
         StringSource(cur, true,
                      new StreamTransformationFilter(decoder,
-                                                    new StringSink(decoded),
+                                                    new StringSink(curDecoded),
                                                     StreamTransformationFilter::NO_PADDING));
+        if (isValid(curDecoded)) {
+            decoded += curDecoded;
+        } else {
+            decoded = "";
+            return decoded;
+        }
     }
     return decoded;
 }

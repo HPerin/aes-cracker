@@ -7,8 +7,6 @@ set(SOURCE_FILES
         src/main.cpp
         src/Decoder.cpp
         src/Decoder.h
-        src/Dictionary.cpp
-        src/Dictionary.h
         )
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 

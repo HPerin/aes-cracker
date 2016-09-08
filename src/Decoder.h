@@ -33,7 +33,7 @@ using CryptoPP::ECB_Mode;
 
 class Decoder {
 public:
-    Decoder(string filename);
+    Decoder(string filename, bool (*isValid)(string&));
     string& decipher(byte key[]);
 
 private:
@@ -41,6 +41,7 @@ private:
     ECB_Mode<AES>::Decryption decoder;
     vector<string> encoded;
     string decoded;
+    bool (*isValid)(string&);
 };
 
 

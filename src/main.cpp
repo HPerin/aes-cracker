@@ -1,5 +1,4 @@
 #include "Decoder.h"
-#include "Dictionary.h"
 
 #include <fstream>
 using std::ofstream;
@@ -21,7 +20,7 @@ const size_t MAX_THREADS = 4;
 atomic<size_t> keysTried(0);
 atomic<size_t> validKeys(0);
 atomic<size_t> runningThreads(0);
-const size_t totalKeys = (const size_t) pow((MAX_KEY_VALUE - MIN_KEY_VALUE), 5);
+size_t totalKeys = (const size_t) pow((MAX_KEY_VALUE - MIN_KEY_VALUE), 5);
 
 void report_thread() {
     cout << "REPORTING STARTED!" << endl;
@@ -42,7 +41,7 @@ void report_thread() {
 
 inline bool isValid(string& text) {
     for (char& c : text) {
-        if ((c < 32 || c > 126) && c != 0)
+        if (c < 32 && c != '\0' && c != '\t' && c != '\n' && c != '\r')
             return false;
     }
 
@@ -59,12 +58,12 @@ void try_decode(byte keyPrefix[], size_t keyPrefixSize, size_t keyTotalSize) {
     }
     key[keyTotalSize] = '\0';
 
-    Decoder decoder("encoded.txt");
+    Decoder decoder("encoded.txt", isValid);
 
     while (key[keyPrefixSize] <= MAX_KEY_VALUE) {
         string& decoded = decoder.decipher(key);
 
-        if (isValid(decoded)) {
+        if (decoded != "") {
             validKeys++;
             output << "KEY: " << (char *) key << ", TEXT: " << decoded << endl;
         }
@@ -84,9 +83,10 @@ void try_decode(byte keyPrefix[], size_t keyPrefixSize, size_t keyTotalSize) {
 }
 
 int main() {
-    //byte keyPrefix[] = { 'e', 's', 's', 'a', 's', 'e', 'n', 'h', 'a', 'e', 'h', 'f', 'r', 'a', MIN_KEY_VALUE };
+    //byte keyPrefix[] = { 'e', 's', 's', 'a', 's', 'e', 'n', 'h', 'a', 'e', 'h', 'f', 'r', MIN_KEY_VALUE };
     byte keyPrefix[] = { 'K', 'e', 'y', '2', 'G', 'r', 'o', 'u', 'p', '1', '3', MIN_KEY_VALUE };
     size_t keyPrefixSize = sizeof(keyPrefix);
+    totalKeys = (const size_t) pow((MAX_KEY_VALUE - MIN_KEY_VALUE), 17 - keyPrefixSize);
 
     thread t(report_thread);
     vector<thread*> workingThreads;
