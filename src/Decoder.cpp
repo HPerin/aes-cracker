@@ -8,19 +8,16 @@
 using std::ifstream;
 using std::getline;
 
-Decoder::Decoder(string filename, bool (*isValid)(string&)) {
+Decoder::Decoder(vector<string> encoded, bool (*isValid)(string&)) {
     this->isValid = isValid;
 
-    ifstream file(filename);
-
-    string line;
-    while(getline(file, line)) {
+    for (string line : encoded) {
         string hexDecoded;
         StringSource(line, true,
             new HexDecoder(
                     new StringSink(hexDecoded)
             ));
-        encoded.push_back(hexDecoded);
+        this->encoded.push_back(hexDecoded);
     }
 }
 

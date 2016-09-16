@@ -33,13 +33,14 @@ using CryptoPP::ECB_Mode;
 
 class Decoder {
 public:
-    Decoder(string filename, bool (*isValid)(string&));
+    Decoder(vector<string> encoded, bool (*isValid)(string&));
     string& decipher(byte key[]);
 
 private:
     byte key[AES_KEY_LENGTH];
     ECB_Mode<AES>::Decryption decoder;
     vector<string> encoded;
+    string encodedKey;
     string decoded;
     bool (*isValid)(string&);
 };
